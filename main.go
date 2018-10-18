@@ -74,6 +74,7 @@ func executeCommand(cmdStr []string) error {
 	)
 	if cfg.CommandTimeout > 0 {
 		ctx, cancel = context.WithTimeout(context.Background(), cfg.CommandTimeout)
+		defer cancel()
 	}
 
 	go func() {
@@ -86,7 +87,6 @@ func executeCommand(cmdStr []string) error {
 			cmd.Process.Kill()
 			return errors.New("Command execution timed out")
 		case err := <-c:
-			cancel()
 			return err
 		}
 	}
